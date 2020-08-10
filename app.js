@@ -31,7 +31,7 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage })
 
-
+// ***
 var imgSchema = mongoose.Schema({
 	title : String ,
 	pic : String
@@ -46,17 +46,8 @@ app.get('/',function(req,res){
 });
 
 app.post("/upload/photo", upload.single("myImage") ,function(req,res,next){
-	var img1 = new img({
-		_id : new mongoose.Types.ObjectId,
-		title : req.body.title ,
-		pic : req.file.path 
-	}, function(err,imgfromdb){
-		if(err){
-			console.log("error happend !!!")
-		} else{
-			console.log(imgfromdb)
-		}
-	})
+
+		
 	res.redirect("/");
 	
 });
