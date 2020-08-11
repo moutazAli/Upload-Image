@@ -3,7 +3,14 @@ var mongodb = require("mongodb");
 var bodyParser= require('body-parser')
 var multer = require('multer');
 var mongoose = require('mongoose');
+// ******
+var fs = require('fs'); 
+var path = require('path'); 
 
+// var MongoClient = require('mongodb').MongoClient;
+// var assert = require('assert');
+
+// const url = 'mongodb+srv://$moutazAli:$qwaszx123**@$[hostlist]/$imgDB?retryWrites=true';
 
 mongoose.connect('mongodb://localhost:27017/imgDB', {
   useNewUrlParser: true,
@@ -14,8 +21,11 @@ mongoose.connect('mongodb://localhost:27017/imgDB', {
 
 var app = express();
 
+// app.set("view engine", "ejs"); 
 app.use(bodyParser.urlencoded({extended: true}))
 app.use("/uploads" , express.static("uploads"));
+
+app.use(bodyParser.json()) //****
 
 
 // SET STORAGE
@@ -34,21 +44,50 @@ var upload = multer({ storage: storage })
 // ***
 var imgSchema = mongoose.Schema({
 	title : String ,
-	pic : String
+	pic : { 
+        data: Buffer, 
+        contentType: String 
+    } 
 })
 
-var img = mongoose.model("img",imgSchema);
+var imgModel = mongoose.model("img",imgSchema);
 
 
 // routs
 app.get('/',function(req,res){
   res.sendFile(__dirname + '/index.html');
+  imgModel.find({}, (err, items) => { 
+      if (err) { 
+         console.log(err); 
+	   } 
+      else { 
+     // returning a list of the images
+		var returnedImgs = new Array ;
+		items.forEach(function(image){
+			returnedImgs.push(image);
+		})
+		console.log(returnedImgs);
+   } 
+  }); 
 });
 
 app.post("/upload/photo", upload.single("myImage") ,function(req,res,next){
 
-		
-	res.redirect("/");
+	var obj = { 
+        title: req.body.title, 
+        pic: { 
+            data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)), 
+            contentType: 'image/png'
+        } 
+    } 
+    imgModel.create(obj, (err, item) => { 
+        if (err) { 
+            console.log(err); 
+        } 
+        else { 
+            res.redirect('/'); 
+        } 
+    }); 
 	
 });
 
