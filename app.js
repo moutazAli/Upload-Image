@@ -3,14 +3,9 @@ var mongodb = require("mongodb");
 var bodyParser= require('body-parser')
 var multer = require('multer');
 var mongoose = require('mongoose');
-// ******
 var fs = require('fs'); 
 var path = require('path'); 
 
-// var MongoClient = require('mongodb').MongoClient;
-// var assert = require('assert');
-
-// const url = 'mongodb+srv://$moutazAli:$qwaszx123**@$[hostlist]/$imgDB?retryWrites=true';
 
 mongoose.connect('mongodb://localhost:27017/imgDB', {
   useNewUrlParser: true,
@@ -25,7 +20,7 @@ var app = express();
 app.use(bodyParser.urlencoded({extended: true}))
 app.use("/uploads" , express.static("uploads"));
 
-app.use(bodyParser.json()) //****
+app.use(bodyParser.json()) 
 
 
 // SET STORAGE
